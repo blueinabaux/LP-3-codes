@@ -1,28 +1,26 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Step 1
 class Node
 {
 public:
     char ch;
     int freq;
-
     Node *left;
     Node *right;
 
-    Node(char ch, int freq)
+    Node(char c, int f)
     {
-        this->ch = ch;
-        this->freq = freq;
+        this->ch = c;
+        this->freq = f;
         left = NULL;
         right = NULL;
     }
 };
 
-// Step 2
 class Compare
 {
+
 public:
     bool operator()(Node *l, Node *r)
     {
@@ -34,29 +32,27 @@ public:
     }
 };
 
-// Step 3
-class HuffmannEncoding
+class HuffmannAlgo
 {
 public:
     Node *root;
     map<char, string> mp;
 
-    void generateCodes(Node *root, string str)
+    void generateCode(Node *root, string str)
     {
         if (root == NULL)
         {
             return;
         }
 
-        // leaf node
         if (!root->left && !root->right)
         {
             mp[root->ch] = str;
             return;
         }
 
-        generateCodes(root->left, str + "0");
-        generateCodes(root->right, str + "1");
+        generateCode(root->left, str + "0");
+        generateCode(root->right, str + "1");
     }
 
     void displayCodes()
@@ -70,9 +66,11 @@ public:
     void buildTree()
     {
         priority_queue<Node *, vector<Node *>, Compare> minHeap;
+
         int n;
-        cout << "Enter the number of unique characters and their freq: ";
+        cout << "Enter the number of unique characters and frequency: ";
         cin >> n;
+
         for (int i = 0; i < n; i++)
         {
             char ch;
@@ -90,26 +88,27 @@ public:
             minHeap.pop();
 
             Node *parent = new Node('$', left->freq + right->freq);
+
             parent->left = left;
             parent->right = right;
 
             minHeap.push(parent);
         }
 
-        Node *root = minHeap.top();
+        this->root = minHeap.top();
         mp.clear();
-        generateCodes(root, " ");
+        generateCode(this->root, "");
     }
 
     string encode(string str)
     {
         string res = "";
 
-        for (auto ch : str)
+        for (auto x : str)
         {
-            if (mp.find(ch) != mp.end())
+            if (mp.find(x) != mp.end())
             {
-                res += mp[ch];
+                res += mp[x];
             }
         }
 
@@ -119,14 +118,15 @@ public:
     string decode(string str)
     {
         string res = "";
+
         Node *curr = root;
         for (auto ch : str)
         {
-            if (ch == 0)
+            if (ch == '0')
             {
                 curr = curr->left;
             }
-            else if (ch == 1)
+            else if (ch == '1')
             {
                 curr = curr->right;
             }
@@ -141,11 +141,10 @@ public:
     }
 };
 
-int
-main()
+int main()
 {
 
-    HuffmannEncoding obj;
+    HuffmannAlgo obj;
     while (true)
     {
         cout << "Enter 1 to Build Huffmann Tree" << endl;
@@ -190,10 +189,10 @@ main()
 
         case 0:
             cout << "Exiting..." << endl;
-            break;
+            return;
 
         default:
-            cout<<"Invalid option";
+            cout << "Invalid option";
             break;
         }
     }
